@@ -3,7 +3,7 @@
 import argparse
 import json
 import urllib.request
-
+from tqdm import tqdm
 
 def fetch_loom_download_url(id):
     request = urllib.request.Request(
@@ -17,10 +17,21 @@ def fetch_loom_download_url(id):
     url = content["url"]
     return url
 
-
 def download_loom_video(url, filename):
-    urllib.request.urlretrieve(url, filename)
-
+    # Fetch the size of the file to be downloaded
+    response = urllib.request.urlopen(url)
+    total_size = int(response.headers.get('Content-Length').strip())
+    
+    # Start downloading the file with progress bar
+    with open(filename, 'wb') as f:
+        with tqdm(total=total_size, unit='B', unit_scale=True, desc=filename) as pbar:
+            block_size = 1024  # 1 Kibibyte
+            while True:
+                buffer = response.read(block_size)
+                if not buffer:
+                    break
+                f.write(buffer)
+                pbar.update(len(buffer))
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
@@ -33,10 +44,8 @@ def parse_arguments():
     arguments = parser.parse_args()
     return arguments
 
-
 def extract_id(url):
     return url.split("/")[-1]
-
 
 def main():
     arguments = parse_arguments()
@@ -46,7 +55,6 @@ def main():
     filename = arguments.out or f"{id}.mp4"
     print(f"Downloading video {id} and saving to {filename}")
     download_loom_video(url, filename)
-
 
 if __name__ == "__main__":
     main()
