@@ -3,6 +3,7 @@
 import argparse
 import json
 import urllib.request
+from urllib.parse import urlparse
 
 
 def fetch_loom_download_url(id):
@@ -35,7 +36,8 @@ def parse_arguments():
 
 
 def extract_id(url):
-    return url.split("/")[-1]
+    parsed_url = urlparse(url)
+    return parsed_url.path.split("/")[-1]
 
 
 def main():
