@@ -25,7 +25,7 @@ def download_loom_video(url, filename):
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        prog="loom-dl", description="script to download loom.com videos"
+        prog="loomdl", description="script to download loom.com videos"
     )
     parser.add_argument(
         "url", help="Url of the video in the format https://www.loom.com/share/[ID]"
